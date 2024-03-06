@@ -1,0 +1,140 @@
+{
+    
+    "openapi": "3.0.0",
+    "info": {
+      "title": "API de Blog de UFC",
+      "description": "API para administrar posts de un blog de UFC",
+      "version": "1.0.0"
+    },
+    "import": {
+        "type": "json"
+      },
+    "paths": {
+      "/posts": {
+        "get": {
+          "summary": "Obtener todos los posts",
+          "responses": {
+            "200": {
+              "description": "Lista de posts obtenida exitosamente"
+            }
+          }
+        },
+        "post": {
+          "summary": "Crear un nuevo post",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    },
+                    "content": {
+                      "type": "string"
+                    },
+                    "result": {
+                      "type": "string"
+                    },
+                    "winnerImageUrl": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Post creado exitosamente"
+            }
+          }
+        }
+      },
+      "/posts/{postId}": {
+        "get": {
+          "summary": "Obtener un post por su ID",
+          "parameters": [
+            {
+              "name": "postId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Post obtenido exitosamente"
+            },
+            "404": {
+              "description": "Post no encontrado"
+            }
+          }
+        },
+        "put": {
+          "summary": "Actualizar un post por su ID",
+          "parameters": [
+            {
+              "name": "postId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    },
+                    "content": {
+                      "type": "string"
+                    },
+                    "result": {
+                      "type": "string"
+                    },
+                    "winnerImageUrl": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Post actualizado exitosamente"
+            }
+          }
+        },
+        "delete": {
+          "summary": "Eliminar un post por su ID",
+          "parameters": [
+            {
+              "name": "postId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Post eliminado exitosamente"
+            }
+          }
+        }
+      }
+    }
+  }
+  

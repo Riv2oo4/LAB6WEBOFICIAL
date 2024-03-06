@@ -1,0 +1,18 @@
+{
+    "extends": "airbnb-base",
+    "rules": {
+      "semi": ["error", "never"],
+      "no-extra-semi": "error",
+      "indent": ["error", 2],
+      "linebreak-style": ["error", "unix"],
+      "comma-dangle": ["error", "never"],
+      "arrow-parens": ["error", "always"],
+      "import/extensions": ["error", "ignorePackages"],
+      "consistent-return": "off",
+      "no-unused-vars": ["warn", { "vars": "local", "args": "none" }],
+      "no-console": "off",
+      "no-multiple-empty-lines": ["error", { "max": 1 }],
+      "eol-last": "error"
+    }
+  }
+  

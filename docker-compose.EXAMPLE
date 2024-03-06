@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+    mysql:
+        build: ./dockerfiles/mysql
+        ports:
+            - "33067:3306"
+        volumes:
+            - "mysql-data:/var/lib/mysql"
+        environment:
+            MYSQL_ROOT_PASSWORD: riv22500
+            MYSQL_DATABASE: UFCbloge
+    blog:
+        build: .
+        depends_on:
+            - mysql
+        links:
+        - mysql
+        ports: 
+            - 22500:3000
+
+volumes:
+    mysql-data:

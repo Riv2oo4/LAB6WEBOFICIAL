@@ -1,0 +1,5 @@
+FROM mysql:8.3
+
+COPY miconfig.cnf /etc/mysql/conf.d/miconfig.cnf
+
+COPY schema.sql /docker-entrypoint-initdb.d/

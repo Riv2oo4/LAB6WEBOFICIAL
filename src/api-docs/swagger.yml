@@ -1,0 +1,251 @@
+openapi: 3.0.0
+info:
+  title: API DE POSTS UFC
+  version: 1.0.0
+  description: Documentación blog de ufc 
+servers:
+  - url: http://127.0.0.1:3000
+
+paths:
+  /posts:
+    post:
+      summary: Crear un nuevo post
+      description: Crea un nuevo post con los datos proporcionados en el cuerpo de la solicitud
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                content:
+                  type: string
+                result:
+                  type: string
+                winnerImageUrl:
+                  type: string
+              required:
+                - title
+                - content
+                - result
+                - winner_image_url
+      responses:
+        '201':
+          description: Post creado correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: ID del post creado
+                  message:
+                    type: string
+                    description: Mensaje de confirmación
+        '400':
+          description: Datos incorrectos en el cuerpo de la solicitud
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Descripción del error
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Descripción del error
+    get:
+      summary: Obtener todos los posts
+      description: Obtiene todos los posts almacenados en el sistema
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      description: ID del post
+                    title:
+                      type: string
+                      description: Título del post
+                    content:
+                      type: string
+                      description: Contenido del post
+                    result:
+                      type: string
+                      description: resultado 
+                    winner_image_url:
+                      type: string
+                      description: imagen del ganador
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Descripción del error
+  /posts/{id}:
+    get:
+      summary: Obtener un post por su ID
+      description: Obtiene un post específico según su ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID del post
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: ID del post
+                  title:
+                    type: string
+                    description: Título del post
+                  content:
+                    type: string
+                    description: Contenido del post
+                  result:
+                    type: string
+                    description: resultado 
+                  winner_image_url:
+                    type: string
+                    description: imagen ganador
+        '404':
+          description: Post no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Descripción del error
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Descripción del error
+    put:
+      summary: Actualizar un post por su ID
+      description: Actualiza un post existente según su ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID del post
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                content:
+                  type: string
+                result:
+                  type: string
+                winnerImageUrl:
+                  type: string
+              required:
+                - title
+                - content
+                - result
+                - winner_image_url
+      responses:
+        '200':
+          description: Post actualizado correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de confirmación
+        '400':
+          description: Datos incorrectos en el cuerpo de la solicitud
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Descripción del error
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Descripción del error
+    delete:
+      summary: Eliminar un post por su ID
+      description: Elimina un post existente según su ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID del post
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Post eliminado correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de confirmación
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Descripción del error

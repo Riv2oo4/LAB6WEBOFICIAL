@@ -1,0 +1,16 @@
+# Dependencias
+node_modules/
+
+
+# Docker-related files
+docker-compose.yml
+.dockerignore
+
+
+
+
+
+
+
+
+
