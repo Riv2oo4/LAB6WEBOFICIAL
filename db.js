@@ -1,7 +1,12 @@
 import pool from './conn.js';
+import CryptoJS from 'crypto-js';
 
 export async function getAllPosts() {
   const [rows] = await pool.query('SELECT * FROM blog_posts');
+  return rows;
+}
+export async function getAllusers() {
+  const [rows] = await pool.query('SELECT * FROM users');
   return rows;
 }
 
@@ -16,6 +21,15 @@ export async function createPost(title, content, result, winnerImageUrl) {
     console.error('Error al crear el post:', error)
     throw error
   }
+}
+
+export function hashPassword(contrasenia) {
+  return CryptoJS.SHA256(contrasenia).toString();
+}
+
+export function comparePasswords(plainContrasenia, hashedPassword) {
+  const hashedPlainPassword = hashPassword(plainContrasenia);
+  return hashedPlainPassword === hashedPassword;
 }
 
 
@@ -58,3 +72,26 @@ export async function updatePostById(postId, title, content, result, winnerImage
     conn.release()
   }
 }
+
+export async function createUser(username, contrasenia) {
+  try {
+    const [resultado] = await pool.query(
+      'INSERT INTO users (username,contrasenia) VALUES (?, ?)',
+      [username, contrasenia]
+    )
+    return resultado.insertId
+  } catch (error) {
+    console.error('Error al crear el post:', error)
+    throw error
+  }
+}
+export async function getUserByUsername(username) {
+  try {
+    const [rows] = await pool.query('SELECT * FROM users WHERE username = ?', [username]);
+    return rows[0];
+  } catch (error) {
+    console.error('Error al obtener el usuario por nombre de usuario:', error);
+    throw error;
+  }
+}
+
