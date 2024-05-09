@@ -4,13 +4,71 @@ import yaml from 'js-yaml';
 import swaggerUi from 'swagger-ui-express';
 import {
   getAllPosts, createPost, getPostById, updatePostById, deletePostById,
+  getAllusers,
+  createUser,
+  getUserByUsername,
+  comparePasswords
 } from '../db.js';
 import cors from  'cors';
+import CryptoJS from 'crypto-js';
+import  jwt from 'jsonwebtoken';
+import dotenv  from "dotenv";
 
 
 const app = express();
 app.use(express.json());
 app.use(cors());
+
+app.use((req, res, next) => {
+  const rutas = ['/users', '/log','/posts'];
+  if (rutas.includes(req.path)) {
+    next();
+  } else {
+    const token = req.headers.authorization;
+    console.log(token);
+    if (!token) {
+      return res.status(401).json({ error: 'Token no proporcionado' });
+    }
+  
+    // Separar el token del prefijo "Bearer"
+    const tokenParts = token.split(' ');
+    if (tokenParts.length !== 2 || tokenParts[0] !== 'Bearer') {
+      return res.status(401).json({ error: 'Formato de token inválido' });
+    }
+  
+    const tokenWithoutBearer = tokenParts[1];
+    console.log(tokenWithoutBearer)
+  
+    try {
+      const decoded = jwt.verify(tokenWithoutBearer, secretKey);
+  
+      // Verificar la fecha de expiración
+      if (decoded.exp * 1000 < Date.now()) {
+        return res.status(401).json({ error: 'Token expirado' });
+      }
+  
+      // Token válido, continuar con la solicitud
+      req.user = decoded.user;
+      next();
+    } catch (error) {
+      return res.status(401).json({ error: 'Token inválido' });
+    }
+  }
+});
+
+dotenv.config()
+const  secretKey=process.env.JSONKEY
+function createToken(user) {
+  try{
+    const token = jwt.sign({ user },secretKey ,{ expiresIn: '30m' });
+    return token
+
+  }
+  catch(error){
+    console.log(error)
+  }
+}
+console.log(secretKey)
 
 const swaggerDocument = yaml.load(fs.readFileSync('src/api-docs/swagger.yml', 'utf8'));
 
@@ -22,6 +80,60 @@ app.get('/posts', async (req, res) => {
     res.json(posts);
   } catch (error) {
     res.status(500).json({ error: 'Error al obtener los posts' });
+  }
+});
+
+
+app.get('/users', async (req, res) => {
+  try {
+    const posts = await getAllusers();
+    res.json(posts);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al obtener los posts' });
+  }
+});
+
+app.post('/users', async (req, res) => {
+  const { username, contrasenia } = req.body;
+  try {
+    if (!username || !contrasenia) {
+      return res.status(400).json({ error: 'Se requieren todos los campos (username, contrasenia)' });
+    }
+
+    const hashedPassword = CryptoJS.SHA256(contrasenia).toString();
+
+    const userId = await createUser(username, hashedPassword);
+    
+    res.status(201).json({ id: userId, message: 'Usuario creado correctamente' });
+  } catch (error) {
+    console.error('Error al crear el usuario:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
+app.post('/log', async (req, res) => {
+  const { username, contrasenia } = req.body;
+  try {
+    if (!username || !contrasenia) {
+      return res.status(400).json({ error: 'Se requieren todos los campos (username, contrasenia)' });
+    }
+        const user = await getUserByUsername(username);
+    
+    if (!user) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+      const passwordMatch = comparePasswords(contrasenia, user.contrasenia);
+    
+    if (!passwordMatch) {
+      return res.status(401).json({ error: 'Credenciales incorrectas' });
+    }else{
+      const token = createToken(user);
+      res.status(200).json({ token:token});
+      
+    }
+  } catch (error) {
+    console.error('Error al iniciar sesión:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
 
@@ -40,7 +152,6 @@ app.post('/posts', async (req, res) => {
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
-
 
 app.get('/posts/:postId', async (req, res) => {
   const { postId } = req.params;
@@ -82,6 +193,9 @@ app.delete('/posts/:postId', async (req, res) => {
     res.status(500).json({ error: 'Error al eliminar el post' });
   }
 });
+
+
+
 app.use((err, req, res, next) => {
   if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
     res.status(400).json({ error: 'Formato de datos incorrecto en el cuerpo de la solicitud' });
@@ -103,3 +217,9 @@ const port = 3000;
 app.listen(port, () => {
   console.log(`Servidor corriendo en http://localhost:${port}`);
 });
+
+
+
+
+
+
