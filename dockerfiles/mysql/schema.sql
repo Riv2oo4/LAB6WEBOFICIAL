@@ -1,3 +1,10 @@
+CREATE TABLE IF NOT EXISTS users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(30) UNIQUE NOT NULL,
+    contrasenia VARCHAR(64) NOT NULL
+);
+
+
 CREATE TABLE IF NOT EXISTS blog_posts (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
@@ -6,3 +13,5 @@ CREATE TABLE IF NOT EXISTS blog_posts (
     result VARCHAR(100) NOT NULL, 
     winner_image_url VARCHAR(255) 
 );
+
+
